@@ -1,7 +1,7 @@
-soho-loader
+stereo-loader
 ===============
 
-Python data loader for SOHO/EPHIN instrument. At the moment provides released data obtained by SunPy through CDF files from CDAWeb for the following datasets:
+Python data loader for some STEREO instruments (i.e., magnetic field and charged particles). At the moment provides released data obtained by SunPy through CDF files from CDAWeb for the following datasets:
 
 -   ``'SOHO_CELIAS-PM_30S'``: SOHO CELIAS-PM 30 second data (`Info <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#SOHO_CELIAS-PM_30S>`_)
 -   ``'SOHO_CELIAS-SEM_15S'``: SOHO CELIAS-SEM 15 second data (`Info <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#SOHO_CELIAS-SEM_15S>`_)    
@@ -12,30 +12,33 @@ Python data loader for SOHO/EPHIN instrument. At the moment provides released da
 Installation
 ------------
 
-soho_loader requires python >= 3.6 and SunPy >= 3.1.3
+stereo_loader requires python >= 3.6 and SunPy >= 3.1.3
 
 It can be installed from this repository using pip:
 
 .. code:: bash
 
-    pip install git+https://github.com/jgieseler/soho-loader
+    pip install git+https://github.com/jgieseler/stereo-loader
 
 Usage
 -----
 
-The standard usecase is to utilize the ``soho_load`` function, which
-returns Pandas dataframe(s) of the measurements.
+The standard usecase is to utilize the ``stereo_load`` function, which
+returns a Pandas dataframe of the measurements and some metadata.
 
 .. code:: python
 
-   from soho_loader import soho_load
-   import datetime as dt
+   from stereo_loader import stereo_load
 
-   df = soho_load(dataset="SOHO_ERNE-HED_L2-1MIN",
-                  startdate=dt.datetime(2021, 4, 16),
-                  enddate="2021/04/20",
-                  path=None,
-                  resample="1min")
+   df, meta = stereo_load(instrument='sept',
+                          startdate='2010/04/17',
+                          enddate='2010/04/18',
+                          spacecraft='ahead',
+                          mag_coord='RTN',
+                          sept_species='e',
+                          sept_viewing='asun',
+                          path=None,
+                          resample='10min')
 
 Input
 ~~~~~
