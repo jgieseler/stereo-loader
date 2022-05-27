@@ -15,6 +15,7 @@ import datetime as dt
 import numpy as np
 import pandas as pd
 
+from sunpy import config
 from sunpy.net import Fido
 from sunpy.net import attrs as a
 from sunpy.timeseries import TimeSeries
@@ -205,6 +206,54 @@ def stereo_sept_loader(startdate, enddate, spacecraft, species, viewing, resampl
     return df, channels_dict_df
 
 
+def _download_metafile(dataset, path=None):
+    """
+    Download master cdf file from cdaweb for 'dataset'
+    """
+    if not path:
+        path = config.get('downloads', 'sample_dir')
+    base_url = 'https://spdf.gsfc.nasa.gov/pub/software/cdawlib/0MASTERS/'
+    fname = dataset.lower() + '_00000000_v01.cdf'
+    url = base_url + fname
+    try:
+        downloaded_file = pooch.retrieve(url=url, known_hash=None, fname=fname, path=path, progressbar=True)
+    except ModuleNotFoundError:
+        downloaded_file = pooch.retrieve(url=url, known_hash=None, fname=fname, path=path, progressbar=False)
+    return downloaded_file
+
+
+def _get_metadata(dataset, path=None):
+    """
+    Get meta data from master cdf file from cdaweb for 'dataset'
+    So far only manually for STEREO/HET
+    """
+    metadata = []
+    try:
+        if not path:
+            path = config.get('downloads', 'sample_dir')
+        if not os.path.exists(path + os.sep + dataset.lower() + '_00000000_v01.cdf'):
+            try:
+                f = _download_metafile(dataset, path)
+            except ConnectionError:
+                print('Found neither metadata file nor internet connection!')
+        cdf = cdflib.CDF(path + os.sep + dataset.lower() + '_00000000_v01.cdf')
+        if dataset[-3:].upper()=='HET':
+            e_mean_energies = cdf.varget('Electron_Flux_Energy_vals')
+            e_energy_bins = cdf.varget('Electron_Flux_Energies')
+            p_mean_energies = cdf.varget('Proton_Flux_Energy_vals')
+            p_energy_bins = cdf.varget('Proton_Flux_Energies')
+            metadata = {'e_mean_energies': cdf.varget('Electron_Flux_Energy_vals'),
+                        'e_energy_bins': cdf.varget('Electron_Flux_Energies'),
+                        'p_mean_energies': cdf.varget('Proton_Flux_Energy_vals'),
+                        'p_energy_bins': cdf.varget('Proton_Flux_Energies')
+                        }
+    except AttributeError:
+        metadata = []
+    except ValueError:
+        metadata = []
+    return metadata
+
+
 def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='RTN', sept_species='e', sept_viewing='sun', path=None, resample=None):
     """
     Downloads CDF files via SunPy/Fido from CDAWeb for HET, LET, MAG, and SEPT onboard STEREO
@@ -289,7 +338,12 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
             print(f'Unable to obtain "{dataset}" data for {startdate}-{enddate}!')
             downloaded_files = []
             df = []
-        return df, downloaded_files
+
+        try:
+            metadata = _get_metadata(dataset, path)
+        except:
+            metadata = []
+        return df, metadata
 
 
 # df, meta = stereo_load('sept', '2010/04/17', '2010/04/18', 'a', sept_viewing='asun', resample='10min', path=path)
