@@ -61,7 +61,7 @@ Return
 Data folder structure
 ---------------------
 
-All data files are automatically saved in a SunPy subfolder of the current user home directory.
+All data files are automatically saved in a SunPy subfolder of the current user home directory if ``path`` is not defined.
 
 
 License
