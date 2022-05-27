@@ -3,11 +3,11 @@ stereo-loader
 
 Python data loader for some STEREO instruments (i.e., magnetic field and charged particles). At the moment provides released data obtained by SunPy through CDF files from CDAWeb for the following datasets:
 
--   ``'SOHO_CELIAS-PM_30S'``: SOHO CELIAS-PM 30 second data (`Info <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#SOHO_CELIAS-PM_30S>`_)
--   ``'SOHO_CELIAS-SEM_15S'``: SOHO CELIAS-SEM 15 second data (`Info <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#SOHO_CELIAS-SEM_15S>`_)    
--   ``'SOHO_COSTEP-EPHIN_L3I-1MIN'``: SOHO COSTEP-EPHIN Level3 intensity 1 minute data (`Info <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#SOHO_COSTEP-EPHIN_L3I-1MIN>`_)
--   ``'SOHO_ERNE-LED_L2-1MIN'``: SOHO ERNE-LED Level2 1 minute data (`Info <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#SOHO_ERNE-LED_L2-1MIN>`_)
--   ``'SOHO_ERNE-HED_L2-1MIN'``: SOHO ERNE-HED Level2 1 minute data (`Info <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#SOHO_ERNE-HED_L2-1MIN>`_)
+- ``'HET'``: STEREO IMPACT/HET Level 1 Data (`Info <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#STA_L1_HET>`_) 
+- ``'LET'``: STEREO IMPACT/LET Level 1 Data (`Info <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#STA_L1_LET>`_)
+- ``'MAG'``: STEREO IMPACT/MAG Magnetic Field Vectors (RTN or SC) (`Info RTN <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#STA_L1_MAG_RTN>`_, `Info SC <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#STA_L1_MAG_SC>`_)
+- ``'MAGB'``: STEREO IMPACT/MAG Burst Mode (~0.03 sec) Magnetic Field Vectors (RTN or SC) (`Info RTN <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#STA_L1_MAGB_RTN>`_, `Info SC <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#STA_L1_MAGB_SC>`_)
+- ``'SEPT'``: STEREO IMPACT/SEPT Level 2 Data (`Info <>`_)
 
 Installation
 ------------
@@ -43,15 +43,19 @@ returns a Pandas dataframe of the measurements and some metadata.
 Input
 ~~~~~
 
--  ``dataset``: ``'SOHO_CELIAS-PM_30S'``, ``'SOHO_COSTEP-EPHIN_L3I-1MIN'``, ``'SOHO_COSTEP-EPHIN_L3I-1MIN'``, ``'SOHO_ERNE-LED_L2-1MIN'``, or ``'SOHO_ERNE-HED_L2-1MIN'``. See above for explanation.
+-  ``instrument``: ``'HET'``, ``'LET'``, ``'MAG'``, ``'MAGB'``, or ``'SEPT'``. See above for explanation.
 -  ``startdate``, ``enddate``: datetime object or "standard" datetime string
+-  ``spacecraft``: String, optional. Name of STEREO spacecraft: ``'ahead'`` or ``'behind'``, by default ``'ahead'``.
+-  ``mag_coord``: String, optional. Coordinate system for MAG: ``'RTN'`` or ``'SC'``, by default ``'RTN'``.
+-  ``sept_species``: String, optional. Particle species for SEPT: ``'e'`` for electrons or ``'p'`` for protons (resp. ions), by default ``'e'``.
+-  ``sept_viewing``: String, optional. Viewing direction for SEPT: ``'sun'``, ``'asun'``, ``'north'``, or ``'south'``, by default ``'sun'``.
 -  ``path``: String, optional. Local path for storing downloaded data, e.g. ``path='data/wind/3dp/'``. By default `None`. Default setting saves data according to `sunpy's Fido standards <https://docs.sunpy.org/en/stable/guide/acquiring_data/fido.html#downloading-data>`_.
 -  ``resample``: Pandas frequency (e.g., ``'1min'`` or ``'1h'``), or ``None``, optional. Frequency to which the original data is resamepled. By default ``None``.
 
 Return
 ~~~~~~
 
--  Pandas dataframe. See info links above for the different datasets for a description of the dataframe columns.
+-  Pandas dataframe and metadata (latter might be empty at the moment). See info links above for the different datasets for a description of the dataframe columns.
 
 
 Data folder structure
