@@ -61,7 +61,8 @@ Return
 Data folder structure
 ---------------------
 
-All data files are automatically saved in a SunPy subfolder of the current user home directory if ``path`` is not defined.
+- SEPT: All data files are automatically saved in a ``data`` subfolder in the current working directory if ``path`` is not defined.
+- All other instruments: All data files are automatically saved in a ``sunpy`` subfolder of the current user home directory if ``path`` is not defined.
 
 
 License
