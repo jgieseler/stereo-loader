@@ -79,14 +79,14 @@ For SEPT measurements, it's possible to combine the intensities of multiple adja
     from stereo_loader import stereo_load, calc_av_en_flux_SEPT
     
     # first, load original data:
-    df, channels_dict_df = stereo_sept_loader(startdate="2021-4-16", 
-                                              enddate="2021-4-20",
-                                              spacecraft='a',
-                                              species='p',
-                                              viewing='sun',
-                                              resample=None,
-                                              path=None,
-                                              all_columns=False)
+    df, channels_dict_df = stereo_load(startdate="2021-4-16", 
+                                       enddate="2021-4-20",
+                                       spacecraft='a',
+                                       sept_species='p',
+                                       sept_viewing='sun',
+                                       resample=None,
+                                       path=None,
+                                       all_columns=False)
     # define energy channel range that should be combined:
     combine_channels = [25, 30]
     sept_avg_int, sept_avg_chstring = calc_av_en_flux_SEPT(df, channels_dict_df, combine_channels)
