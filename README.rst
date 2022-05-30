@@ -65,6 +65,32 @@ Data folder structure
 - All other instruments: All data files are automatically saved in a ``sunpy`` subfolder of the current user home directory if ``path`` is not defined.
 
 
+Combine intensitiy for multiple energy channels (SEPT only)
+-----------------------------------------------------------
+
+For SEPT measurements, it's possible to combine the intensities of multiple adjacent energy channels with the function ``calc_av_en_flux_SEPT``. It returns a Pandas Dataframe with the arithmetic mean of all intensities and a string providing the corresponding energy range. The following example demonstrates how to build an average channel of SEPT proton energy channels 25 to 30. 
+
+**Note that the channel numbers provided by** ``combine_channels`` **refer to the channel numbers of the SEPT instrument (and not the index number of the variable)! This is escpecially important because for SEPT the lowest channels usually are omitted, and here only channels 2 to 31 are provided!**
+
+.. code:: python
+
+    from stereo_loader import stereo_load, calc_av_en_flux_SEPT
+    
+    # first, load original data:
+    df, channels_dict_df = stereo_sept_loader(startdate="2021-4-16", 
+                                              enddate="2021-4-20",
+                                              spacecraft='a',
+                                              species='p',
+                                              viewing='sun',
+                                              resample=None,
+                                              path=None,
+                                              all_columns=False)
+    # define energy channel range that should be combined:
+    combine_channels = [25, 30]
+    sept_avg_int, sept_avg_chstring = calc_av_en_flux_SEPT(df, channels_dict_df, combine_channels)
+    print(sept_avg_chstring)
+
+
 License
 -------
 
