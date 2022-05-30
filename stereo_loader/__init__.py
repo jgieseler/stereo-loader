@@ -346,4 +346,48 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
         return df, metadata
 
 
-# df, meta = stereo_load('sept', '2010/04/17', '2010/04/18', 'a', sept_viewing='asun', resample='10min', path=path)
+def calc_av_en_flux_SEPT(df, channels_dict_df, avg_channels):
+    """
+    avg_channels : list of int, optional
+        averaging channels m to n if [m, n] is provided (both integers), by default None
+    """
+
+    # # create Pandas Dataframe from channels_dict:
+    # channels_dict_df = pd.DataFrame.from_dict(channels_dict)
+    # channels_dict_df.index = channels_dict_df.bins
+    # channels_dict_df.drop(columns=['bins'], inplace=True)
+
+    # calculation of total delta-E for averaging multiple channels:
+    if len(avg_channels) > 1:
+        # DE_total = sum(channels_dict['DE'][avg_channels[0]-2:avg_channels[-1]-2+1])
+        DE_total = channels_dict_df.loc[avg_channels[0]:avg_channels[-1]]['DE'].sum()
+    else:
+        # DE_total = channels_dict['DE'][avg_channels[0]-2]
+        DE_total = channels_dict_df.loc[avg_channels[0]]['DE']
+
+    # averaging of intensities:
+    t_flux = 0
+    for bins in range(avg_channels[0], avg_channels[-1]+1):
+        # t_flux = t_flux + chan_data[:, bins-2]*channels_dict['DE'][bins-2]
+        t_flux = t_flux + df[f'ch_{bins}'] * channels_dict_df.loc[bins]['DE']
+    avg_flux = t_flux/DE_total
+
+    # building new channel string
+    # ch_string1 = channels['ch_strings'][ch[0]-2]
+    # ch_string11 = str.split(ch_string1, '-')[0]
+    # ch_string11 = str.split(ch_string11, '.0')[0]
+    # ch_string2 = channels['ch_strings'][ch[-1]-2]
+    # ch_string22 = str.split(ch_string2, '-')[1]
+    # ch_string22 = str.split(ch_string22, '.0')[0]
+
+    # ch_string =ch_string11+'-'+ch_string22+' keV'+' '+which
+
+    # string lower energy without .0 decimal
+    energy_low = channels_dict_df.loc[avg_channels[0]]['ch_strings'].split('-')[0].replace(".0", "")
+
+    # string upper energy without .0 decimal but with ' keV' ending
+    energy_up = channels_dict_df.loc[avg_channels[-1]]['ch_strings'].split('-')[-1].replace(".0", "")
+
+    new_ch_string = energy_low + '-' + energy_up
+
+    return avg_flux, new_ch_string
