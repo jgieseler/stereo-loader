@@ -86,8 +86,7 @@ For SEPT measurements, it's possible to combine the intensities of multiple adja
                                        sept_species='p',
                                        sept_viewing='sun',
                                        resample=None,
-                                       path=None,
-                                       all_columns=False)
+                                       path=None)
     # define energy channel range that should be combined:
     combine_channels = [25, 30]
     sept_avg_int, sept_avg_chstring = calc_av_en_flux_SEPT(df, channels_dict_df, combine_channels)
