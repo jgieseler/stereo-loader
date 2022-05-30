@@ -79,7 +79,8 @@ For SEPT measurements, it's possible to combine the intensities of multiple adja
     from stereo_loader import stereo_load, calc_av_en_flux_SEPT
     
     # first, load original data:
-    df, channels_dict_df = stereo_load(startdate="2021-4-16", 
+    df, channels_dict_df = stereo_load(instrument='sept',
+                                       startdate="2021-4-16",
                                        enddate="2021-4-20",
                                        spacecraft='a',
                                        sept_species='p',
