@@ -19,6 +19,8 @@ It can be installed from this repository using pip:
 .. code:: bash
 
     pip install git+https://github.com/jgieseler/stereo-loader
+    
+**Note:** Windows users might `need to install git <https://github.com/git-guides/install-git>`_ for this to work!
 
 Usage
 -----
