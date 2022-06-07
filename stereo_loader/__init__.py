@@ -265,11 +265,25 @@ def _get_metadata(dataset, path_to_cdf):
         metadata = {'Electron_Bins_Text': cdf.varget('Electron_Flux_Energies'),
                     'Electron_Flux_UNITS': cdf.varattsget('Electron_Flux')['UNITS'],
                     'Electron_Flux_FILLVAL': cdf.varattsget('Electron_Flux')['FILLVAL'],
-                    'H_Bins_Text': cdf.varget('Proton_Flux_Energies'),
                     'Proton_Bins_Text': cdf.varget('Proton_Flux_Energies'),
                     'Proton_Flux_UNITS': cdf.varattsget('Proton_Flux')['UNITS'],
                     'Proton_Flux_FILLVAL': cdf.varattsget('Proton_Flux')['FILLVAL'],
                     }
+
+        channels_dict_df_e = pd.DataFrame(metadata['Electron_Bins_Text'], columns=['ch_strings'])
+        channels_dict_df_e['lower_E'] = channels_dict_df_e.ch_strings.apply(lambda x: float((x.split('-')[0]).replace(' ', '').replace('MeV', '')))
+        channels_dict_df_e['upper_E'] = channels_dict_df_e.ch_strings.apply(lambda x: float((x.split('-')[1]).replace(' ', '').replace('MeV', '')))
+        channels_dict_df_e['DE'] = channels_dict_df_e['upper_E'] - channels_dict_df_e['lower_E']
+        channels_dict_df_e['mean_E'] = np.sqrt(channels_dict_df_e['upper_E'] * channels_dict_df_e['lower_E'])
+
+        channels_dict_df_p = pd.DataFrame(metadata['Proton_Bins_Text'], columns=['ch_strings'])
+        channels_dict_df_p['lower_E'] = channels_dict_df_p.ch_strings.apply(lambda x: float((x.split('-')[0]).replace(' ', '').replace('MeV', '')))
+        channels_dict_df_p['upper_E'] = channels_dict_df_p.ch_strings.apply(lambda x: float((x.split('-')[1]).replace(' ', '').replace('MeV', '')))
+        channels_dict_df_p['DE'] = channels_dict_df_p['upper_E'] - channels_dict_df_p['lower_E']
+        channels_dict_df_p['mean_E'] = np.sqrt(channels_dict_df_p['upper_E'] * channels_dict_df_p['lower_E'])
+
+        meta.update({'channels_dict_df_e': channels_dict_df_e})
+        meta.update({'channels_dict_df_p': channels_dict_df_p})
     return metadata
 
 
@@ -370,6 +384,53 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
 
 
 def calc_av_en_flux_SEPT(df, channels_dict_df, avg_channels):
+    """
+    avg_channels : list of int, optional
+        averaging channels m to n if [m, n] is provided (both integers), by default None
+    """
+
+    # # create Pandas Dataframe from channels_dict:
+    # channels_dict_df = pd.DataFrame.from_dict(channels_dict)
+    # channels_dict_df.index = channels_dict_df.bins
+    # channels_dict_df.drop(columns=['bins'], inplace=True)
+
+    # calculation of total delta-E for averaging multiple channels:
+    if len(avg_channels) > 1:
+        # DE_total = sum(channels_dict['DE'][avg_channels[0]-2:avg_channels[-1]-2+1])
+        DE_total = channels_dict_df.loc[avg_channels[0]:avg_channels[-1]]['DE'].sum()
+    else:
+        # DE_total = channels_dict['DE'][avg_channels[0]-2]
+        DE_total = channels_dict_df.loc[avg_channels[0]]['DE']
+
+    # averaging of intensities:
+    t_flux = 0
+    for bins in range(avg_channels[0], avg_channels[-1]+1):
+        # t_flux = t_flux + chan_data[:, bins-2]*channels_dict['DE'][bins-2]
+        t_flux = t_flux + df[f'ch_{bins}'] * channels_dict_df.loc[bins]['DE']
+    avg_flux = t_flux/DE_total
+
+    # building new channel string
+    # ch_string1 = channels['ch_strings'][ch[0]-2]
+    # ch_string11 = str.split(ch_string1, '-')[0]
+    # ch_string11 = str.split(ch_string11, '.0')[0]
+    # ch_string2 = channels['ch_strings'][ch[-1]-2]
+    # ch_string22 = str.split(ch_string2, '-')[1]
+    # ch_string22 = str.split(ch_string22, '.0')[0]
+
+    # ch_string =ch_string11+'-'+ch_string22+' keV'+' '+which
+
+    # string lower energy without .0 decimal
+    energy_low = channels_dict_df.loc[avg_channels[0]]['ch_strings'].split('-')[0].replace(".0", "")
+
+    # string upper energy without .0 decimal but with ' keV' ending
+    energy_up = channels_dict_df.loc[avg_channels[-1]]['ch_strings'].split('-')[-1].replace(".0", "")
+
+    new_ch_string = energy_low + '-' + energy_up
+
+    return avg_flux, new_ch_string
+
+
+def calc_av_en_flux_HET(df, channels_dict_df, avg_channels):
     """
     avg_channels : list of int, optional
         averaging channels m to n if [m, n] is provided (both integers), by default None
