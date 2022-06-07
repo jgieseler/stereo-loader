@@ -254,7 +254,7 @@ def stereo_sept_loader(startdate, enddate, spacecraft, species, viewing, resampl
 #     return metadata
 
 
-def _get_metadata(path_to_cdf):
+def _get_metadata(dataset, path_to_cdf):
     """
     Get meta data from single cdf file
     So far only manually for STEREO/HET
@@ -352,7 +352,7 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
             data = TimeSeries(downloaded_files, concatenate=True)
             df = data.to_dataframe()
 
-            metadata = _get_metadata(downloaded_files[0])
+            metadata = _get_metadata(dataset, downloaded_files[0])
 
             # remove this (i.e. following two lines) when sunpy's read_cdf is updated,
             # and FILLVAL will be replaced directly, see
