@@ -262,12 +262,12 @@ def _get_metadata(path_to_cdf):
     metadata = []
     cdf = cdflib.CDF(path_to_cdf)
     if dataset[-3:].upper()=='HET':
-        metadata = {'e_energy_bins': cdf.varget('Electron_Flux_Energies'),
-                    'e_flux_units': cdf.varattsget('Electron_Flux')['UNITS'],
-                    'e_flux_fillval': cdf.varattsget('Electron_Flux')['FILLVAL'],
-                    'p_energy_bins': cdf.varget('Proton_Flux_Energies'),
-                    'p_flux_units': cdf.varattsget('Proton_Flux')['UNITS'],
-                    'p_flux_fillval': cdf.varattsget('Proton_Flux')['FILLVAL'],
+        metadata = {'Electron_Bins_Text': cdf.varget('Electron_Flux_Energies'),
+                    'Electron_Flux_UNITS': cdf.varattsget('Electron_Flux')['UNITS'],
+                    'Electron_Flux_FILLVAL': cdf.varattsget('Electron_Flux')['FILLVAL'],
+                    'Proton_Bins_Text': cdf.varget('Proton_Flux_Energies'),
+                    'Proton_Flux_UNITS': cdf.varattsget('Proton_Flux')['UNITS'],
+                    'Proton_Flux_FILLVAL': cdf.varattsget('Proton_Flux')['FILLVAL'],
                     }
     return metadata
 
@@ -357,7 +357,7 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
             # and FILLVAL will be replaced directly, see
             # https://github.com/sunpy/sunpy/issues/5908
             if instrument.upper() == 'HET':
-                df = df.replace(meta['e_flux_fillval'], np.nan)
+                df = df.replace(meta['Electron_Flux_FILLVAL'], np.nan)
 
             if isinstance(resample, str):
                 df = resample_df(df, resample)
