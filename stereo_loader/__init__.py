@@ -265,6 +265,7 @@ def _get_metadata(path_to_cdf):
         metadata = {'Electron_Bins_Text': cdf.varget('Electron_Flux_Energies'),
                     'Electron_Flux_UNITS': cdf.varattsget('Electron_Flux')['UNITS'],
                     'Electron_Flux_FILLVAL': cdf.varattsget('Electron_Flux')['FILLVAL'],
+                    'H_Bins_Text': cdf.varget('Proton_Flux_Energies'),
                     'Proton_Bins_Text': cdf.varget('Proton_Flux_Energies'),
                     'Proton_Flux_UNITS': cdf.varattsget('Proton_Flux')['UNITS'],
                     'Proton_Flux_FILLVAL': cdf.varattsget('Proton_Flux')['FILLVAL'],
