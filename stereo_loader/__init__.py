@@ -282,8 +282,8 @@ def _get_metadata(dataset, path_to_cdf):
         channels_dict_df_p['DE'] = channels_dict_df_p['upper_E'] - channels_dict_df_p['lower_E']
         channels_dict_df_p['mean_E'] = np.sqrt(channels_dict_df_p['upper_E'] * channels_dict_df_p['lower_E'])
 
-        meta.update({'channels_dict_df_e': channels_dict_df_e})
-        meta.update({'channels_dict_df_p': channels_dict_df_p})
+        metadata.update({'channels_dict_df_e': channels_dict_df_e})
+        metadata.update({'channels_dict_df_p': channels_dict_df_p})
     return metadata
 
 
