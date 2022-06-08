@@ -373,6 +373,11 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
             # https://github.com/sunpy/sunpy/issues/5908
             if instrument.upper() == 'HET':
                 df = df.replace(metadata['Electron_Flux_FILLVAL'], np.nan)
+            if instrument.upper() == 'LET':
+                df = df.replace(-1e+31, np.nan)
+                df = df.replace(-2147483648, np.nan)
+            if instrument.upper() == 'MAG':
+                df = df.replace(-1e+31, np.nan)
 
             if isinstance(resample, str):
                 df = resample_df(df, resample)
