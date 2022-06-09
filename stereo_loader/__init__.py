@@ -87,7 +87,7 @@ def stereo_sept_download(date, spacecraft, species, viewing, path=None):
     return downloaded_file
 
 
-def stereo_sept_loader(startdate, enddate, spacecraft, species, viewing, resample=None, path=None, all_columns=False):
+def stereo_sept_loader(startdate, enddate, spacecraft, species, viewing, resample=None, path=None, all_columns=False, pos_timestamp=None):
     """Loads STEREO/SEPT data and returns it as Pandas dataframe together with a dictionary providing the energy ranges per channel
 
     Parameters
@@ -198,6 +198,12 @@ def stereo_sept_loader(startdate, enddate, spacecraft, species, viewing, resampl
 
     # replace bad data with np.nan:
     df = df.replace(-9999.900, np.nan)
+
+    # careful!
+    # adjusting the position of the timestamp manually.
+    # requires knowledge of the original time resolution and timestamp position!
+    if pos_timestamp == 'start':
+        df.index = df.index-pd.Timedelta('30s')
 
     # optional resampling:
     if isinstance(resample, str):
@@ -347,7 +353,8 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
                                                   viewing=sept_viewing,
                                                   resample=resample,
                                                   path=path,
-                                                  all_columns=False)
+                                                  all_columns=False,
+                                                  pos_timestamp=pos_timestamp)
         return df, channels_dict_df
     else:
         # define spacecraft string
@@ -388,7 +395,7 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
                 if instrument.upper() == 'HET':
                     df.index = df.index+pd.Timedelta('30s')
             if pos_timestamp == 'start':
-                if instrument.upper() == 'LET' or instrument.upper() == 'SEPT':
+                if instrument.upper() == 'LET':
                     df.index = df.index-pd.Timedelta('30s')
 
             if isinstance(resample, str):
