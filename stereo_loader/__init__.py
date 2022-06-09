@@ -335,6 +335,8 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
     -------
     df : {Pandas dataframe}
         See links above for the different datasets for a description of the dataframe columns
+    metadata : {dict}
+        Dictionary containing different metadata, e.g., energy channels
     """
     if startdate==enddate:
         print(f'"startdate" and "enddate" must be different!')
