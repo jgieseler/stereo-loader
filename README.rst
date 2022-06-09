@@ -59,7 +59,7 @@ Input
 Return
 ~~~~~~
 
--  Pandas dataframe and metadata (latter might be empty at the moment). See info links above for the different datasets for a description of the dataframe columns.
+-  Pandas dataframe and dictionary of metadata (e.g., energy channels). See info links above for the different datasets for a description of the dataframe columns.
 
 
 Data folder structure
