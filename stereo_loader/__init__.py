@@ -287,7 +287,7 @@ def _get_metadata(dataset, path_to_cdf):
     return metadata
 
 
-def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='RTN', sept_species='e', sept_viewing='sun', path=None, resample=None):
+def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='RTN', sept_species='e', sept_viewing='sun', path=None, resample=None, pos_timestamp=None):
     """
     Downloads CDF files via SunPy/Fido from CDAWeb for HET, LET, MAG, and SEPT onboard STEREO
 
@@ -321,6 +321,8 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
         Local path for storing downloaded data, by default None
     resample : {str}, optional
         resample frequency in format understandable by Pandas, e.g. '1min', by default None
+    pos_timestamp : {str}, optional
+        change the position of the timestamp: 'center' or 'start' of the accumulation interval, by default None
 
 
     Returns
@@ -378,6 +380,16 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
                 df = df.replace(-2147483648, np.nan)
             if instrument.upper() == 'MAG':
                 df = df.replace(-1e+31, np.nan)
+
+            # careful!
+            # adjusting the position of the timestamp manually.
+            # requires knowledge of the original time resolution and timestamp position!
+            if pos_timestamp == 'center':
+                if instrument.upper() == 'HET':
+                    df.index = df.index+pd.Timedelta('30s')
+            if pos_timestamp == 'start':
+                if instrument.upper() == 'LET' or instrument.upper() == 'SEPT':
+                    df.index = df.index-pd.Timedelta('30s')
 
             if isinstance(resample, str):
                 df = resample_df(df, resample)
