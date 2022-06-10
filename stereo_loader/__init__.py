@@ -25,14 +25,20 @@ from sunpy.timeseries import TimeSeries
 warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)
 
 
-def resample_df(df, resample):
+def resample_df(df, resample, pos_timestamp='center'):
     """
     Resample Pandas Dataframe
     """
+    if not pos_timestamp:
+        pos_timestamp = 'center'
     try:
-        # _ = pd.Timedelta(resample)  # test if resample is proper Pandas frequency
         df = df.resample(resample).mean()
-        df.index = df.index + pd.tseries.frequencies.to_offset(pd.Timedelta(resample)/2)
+        if pos_timestamp == 'center':
+            df.index = df.index + pd.tseries.frequencies.to_offset(pd.Timedelta(resample)/2)
+        if pos_timestamp == 'start':
+            df.index = df.index
+        if pos_timestamp == 'stop' or pos_timestamp == 'end':
+            df.index = df.index + pd.tseries.frequencies.to_offset(pd.Timedelta(resample))
     except ValueError:
         raise Warning(f"Your 'resample' option of [{resample}] doesn't seem to be a proper Pandas frequency!")
     return df
@@ -182,10 +188,10 @@ def stereo_sept_loader(startdate, enddate, spacecraft, species, viewing, resampl
                 ['integration_time']
 
     # read files into Pandas dataframes:
-    df = pd.read_csv(filelist[0], header=None, sep='\s+', names=col_names, comment='#')
+    df = pd.read_csv(filelist[0], header=None, sep=r'\s+', names=col_names, comment='#')
     if len(filelist) > 1:
         for file in filelist[1:]:
-            t_df = pd.read_csv(file, header=None, sep='\s+', names=col_names, comment='#')
+            t_df = pd.read_csv(file, header=None, sep=r'\s+', names=col_names, comment='#')
             df = pd.concat([df, t_df])
 
     # generate datetime index from Julian date:
@@ -207,7 +213,7 @@ def stereo_sept_loader(startdate, enddate, spacecraft, species, viewing, resampl
 
     # optional resampling:
     if isinstance(resample, str):
-        df = resample_df(df, resample)
+        df = resample_df(df, resample, pos_timestamp=pos_timestamp)
 
     return df, channels_dict_df
 
@@ -401,7 +407,7 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
                     df.index = df.index-pd.Timedelta('30s')
 
             if isinstance(resample, str):
-                df = resample_df(df, resample)
+                df = resample_df(df, resample, pos_timestamp=pos_timestamp)
         except RuntimeError:
             print(f'Unable to obtain "{dataset}" data for {startdate}-{enddate}!')
             downloaded_files = []
