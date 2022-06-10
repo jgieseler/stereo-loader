@@ -346,6 +346,8 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
     """
     if startdate==enddate:
         print(f'"startdate" and "enddate" must be different!')
+    if not (pos_timestamp=='center' or pos_timestamp=='start' or pos_timestamp==None):
+        raise ValueError(f'"pos_timestamp" must be either None, "center", or "start"!')
 
     # find name variations
     if spacecraft.lower()=='a' or spacecraft.lower()=='sta':
