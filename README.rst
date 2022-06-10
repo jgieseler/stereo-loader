@@ -40,7 +40,7 @@ returns a Pandas dataframe of the measurements and some metadata.
                           sept_species='e',
                           sept_viewing='asun',
                           path=None,
-                          resample='10min'
+                          resample='10min',
                           pos_timestamp=None)
 
 Input
