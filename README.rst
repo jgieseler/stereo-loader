@@ -9,6 +9,10 @@ Python data loader for some STEREO instruments (i.e., magnetic field and charged
 - ``'MAGB'``: STEREO IMPACT/MAG Burst Mode (~0.03 sec) Magnetic Field Vectors (RTN or SC) (`Info RTN <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#STA_L1_MAGB_RTN>`_, `Info SC <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#STA_L1_MAGB_SC>`_)
 - ``'SEPT'``: STEREO IMPACT/SEPT Level 2 Data (`Info 1 <http://www2.physik.uni-kiel.de/STEREO/data/sept/level2/about.txt>`_, `Info 2 <http://www2.physik.uni-kiel.de/STEREO/data/sept/level2/SEPT_L2_description.pdf>`_)
 
+Disclaimer
+----------
+This software is provided "as is", with no guarantee. It is no official data source, and not officially endorsed by the corresponding instrument teams. Please always refer to the instrument descriptions before using the data!
+
 Installation
 ------------
 
