@@ -414,6 +414,7 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
             print(f'Unable to obtain "{dataset}" data for {startdate}-{enddate}!')
             downloaded_files = []
             df = []
+            metadata = []
         return df, metadata
 
 
