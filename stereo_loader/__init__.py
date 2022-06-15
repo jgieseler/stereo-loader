@@ -297,7 +297,7 @@ def _get_metadata(dataset, path_to_cdf):
     return metadata
 
 
-def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='RTN', sept_species='e', sept_viewing='sun', path=None, resample=None, pos_timestamp=None):
+def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='RTN', sept_species='e', sept_viewing='sun', path=None, resample=None, pos_timestamp=None, max_conn=5):
     """
     Downloads CDF files via SunPy/Fido from CDAWeb for HET, LET, MAG, and SEPT onboard STEREO
 
@@ -333,6 +333,8 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
         resample frequency in format understandable by Pandas, e.g. '1min', by default None
     pos_timestamp : {str}, optional
         change the position of the timestamp: 'center' or 'start' of the accumulation interval, by default None
+    max_conn : {int}, optional
+        The number of parallel download slots used by Fido.fetch, by default 5
 
 
     Returns
@@ -378,7 +380,7 @@ def stereo_load(instrument, startdate, enddate, spacecraft='ahead', mag_coord='R
         cda_dataset = a.cdaweb.Dataset(dataset)
         try:
             result = Fido.search(trange, cda_dataset)
-            downloaded_files = Fido.fetch(result, path=path)  # use Fido.fetch(result, path='/ThisIs/MyPath/to/Data/{file}') to use a specific local folder for saving data files
+            downloaded_files = Fido.fetch(result, path=path, max_conn=max_conn)  # use Fido.fetch(result, path='/ThisIs/MyPath/to/Data/{file}') to use a specific local folder for saving data files
             downloaded_files.sort()
             data = TimeSeries(downloaded_files, concatenate=True)
             df = data.to_dataframe()
