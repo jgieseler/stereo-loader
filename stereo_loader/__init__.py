@@ -14,6 +14,7 @@ import warnings
 import datetime as dt
 import numpy as np
 import pandas as pd
+import sunpy
 
 from sunpy import config
 from sunpy.net import Fido
