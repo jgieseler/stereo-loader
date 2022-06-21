@@ -10,6 +10,7 @@ import cdflib
 import glob
 import os
 import pooch
+import requests
 import warnings
 import datetime as dt
 import numpy as np
@@ -88,10 +89,9 @@ def stereo_sept_download(date, spacecraft, species, viewing, path=None):
         downloaded_file = pooch.retrieve(url=url, known_hash=None, fname=file, path=path, progressbar=True)
     except ModuleNotFoundError:
         downloaded_file = pooch.retrieve(url=url, known_hash=None, fname=file, path=path, progressbar=False)
-    except HTTPError:
+    except requests.HTTPError:
         print(f'No corresponding SEPT data found at {url}')
         downloaded_file = []
-
 
     return downloaded_file
 
