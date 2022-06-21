@@ -136,20 +136,6 @@ def stereo_sept_loader(startdate, enddate, spacecraft, species, viewing, resampl
     if spacecraft.lower() == 'b' or spacecraft.lower() == 'stb':
         spacecraft = 'behind'
 
-    if not path:
-        path = os.getcwd()+os.sep+'data'
-    # create list of files to load:
-    dates = pd.date_range(start=startdate, end=enddate, freq='D')
-    filelist = []
-    for i, doy in enumerate(dates.day_of_year):
-        try:
-            file = glob.glob(f"{path}{os.sep}sept_{spacecraft}_{species}_{viewing}_{dates[i].year}_{doy}_*.dat")[0]
-        except IndexError:
-            # print(f"File not found locally from {path}, downloading from http://www2.physik.uni-kiel.de/STEREO/data/sept/level2/")
-            file = stereo_sept_download(dates[i], spacecraft, species, viewing, path)
-        filelist.append(file)
-    filelist = np.sort(filelist)
-
     # channel dicts from Nina:
     ch_strings = ['45.0-55.0 keV', '55.0-65.0 keV', '65.0-75.0 keV', '75.0-85.0 keV', '85.0-105.0 keV', '105.0-125.0 keV', '125.0-145.0 keV', '145.0-165.0 keV', '165.0-195.0 keV', '195.0-225.0 keV', '225.0-255.0 keV', '255.0-295.0 keV', '295.0-335.0 keV', '335.0-375.0 keV', '375.0-425.0 keV']
     mean_E = []
@@ -190,33 +176,51 @@ def stereo_sept_loader(startdate, enddate, spacecraft, species, viewing, resampl
                 [f'err_ch_{i}' for i in channels_dict_df.index] + \
                 ['integration_time']
 
-    # read files into Pandas dataframes:
-    df = pd.read_csv(filelist[0], header=None, sep=r'\s+', names=col_names, comment='#')
-    if len(filelist) > 1:
-        for file in filelist[1:]:
-            t_df = pd.read_csv(file, header=None, sep=r'\s+', names=col_names, comment='#')
-            df = pd.concat([df, t_df])
+    if not path:
+        path = os.getcwd()+os.sep+'data'
+    # create list of files to load:
+    dates = pd.date_range(start=startdate, end=enddate, freq='D')
+    filelist = []
+    for i, doy in enumerate(dates.day_of_year):
+        try:
+            file = glob.glob(f"{path}{os.sep}sept_{spacecraft}_{species}_{viewing}_{dates[i].year}_{doy}_*.dat")[0]
+        except IndexError:
+            # print(f"File not found locally from {path}, downloading from http://www2.physik.uni-kiel.de/STEREO/data/sept/level2/")
+            file = stereo_sept_download(dates[i], spacecraft, species, viewing, path)
+            if len(file) > 0:
+                filelist.append(file)
+    if len(filelist) > 0:
+        filelist = np.sort(filelist)
 
-    # generate datetime index from Julian date:
-    df.index = pd.to_datetime(df['julian_date'], origin='julian', unit='D')
-    df.index.name = 'time'
+        # read files into Pandas dataframes:
+        df = pd.read_csv(filelist[0], header=None, sep=r'\s+', names=col_names, comment='#')
+        if len(filelist) > 1:
+            for file in filelist[1:]:
+                t_df = pd.read_csv(file, header=None, sep=r'\s+', names=col_names, comment='#')
+                df = pd.concat([df, t_df])
 
-    # drop some unused columns:
-    if not all_columns:
-        df = df.drop(columns=['julian_date', 'year', 'frac_doy', 'hour', 'min', 'sec', 'integration_time'])
+        # generate datetime index from Julian date:
+        df.index = pd.to_datetime(df['julian_date'], origin='julian', unit='D')
+        df.index.name = 'time'
 
-    # replace bad data with np.nan:
-    df = df.replace(-9999.900, np.nan)
+        # drop some unused columns:
+        if not all_columns:
+            df = df.drop(columns=['julian_date', 'year', 'frac_doy', 'hour', 'min', 'sec', 'integration_time'])
 
-    # careful!
-    # adjusting the position of the timestamp manually.
-    # requires knowledge of the original time resolution and timestamp position!
-    if pos_timestamp == 'start':
-        df.index = df.index-pd.Timedelta('30s')
+        # replace bad data with np.nan:
+        df = df.replace(-9999.900, np.nan)
 
-    # optional resampling:
-    if isinstance(resample, str):
-        df = resample_df(df, resample, pos_timestamp=pos_timestamp)
+        # careful!
+        # adjusting the position of the timestamp manually.
+        # requires knowledge of the original time resolution and timestamp position!
+        if pos_timestamp == 'start':
+            df.index = df.index-pd.Timedelta('30s')
+
+        # optional resampling:
+        if isinstance(resample, str):
+            df = resample_df(df, resample, pos_timestamp=pos_timestamp)
+    else:
+        df = []
 
     return df, channels_dict_df
 
