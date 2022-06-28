@@ -187,8 +187,8 @@ def stereo_sept_loader(startdate, enddate, spacecraft, species, viewing, resampl
         except IndexError:
             # print(f"File not found locally from {path}, downloading from http://www2.physik.uni-kiel.de/STEREO/data/sept/level2/")
             file = stereo_sept_download(dates[i], spacecraft, species, viewing, path)
-            if len(file) > 0:
-                filelist.append(file)
+        if len(file) > 0:
+            filelist.append(file)
     if len(filelist) > 0:
         filelist = np.sort(filelist)
 
