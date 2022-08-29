@@ -7,7 +7,9 @@ Python data loader for some STEREO instruments (i.e., magnetic field and charged
 - ``'LET'``: STEREO IMPACT/LET Level 1 Data (`Info <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#STA_L1_LET>`_)
 - ``'MAG'``: STEREO IMPACT/MAG Magnetic Field Vectors (RTN or SC) (`Info RTN <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#STA_L1_MAG_RTN>`_, `Info SC <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#STA_L1_MAG_SC>`_)
 - ``'MAGB'``: STEREO IMPACT/MAG Burst Mode (~0.03 sec) Magnetic Field Vectors (RTN or SC) (`Info RTN <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#STA_L1_MAGB_RTN>`_, `Info SC <https://cdaweb.gsfc.nasa.gov/misc/NotesS.html#STA_L1_MAGB_SC>`_)
-- ``'SEPT'``: STEREO IMPACT/SEPT Level 2 Data (`Info 1 <http://www2.physik.uni-kiel.de/STEREO/data/sept/level2/about.txt>`_, `Info 2 <http://www2.physik.uni-kiel.de/STEREO/data/sept/level2/SEPT_L2_description.pdf>`_)
+- ``'SEPT'``: STEREO IMPACT/SEPT Level 2 Data (`Info 1 <http://www2.physik.uni-kiel.de/STEREO/data/sept/level2/about.txt>`_, `Info 2 <http://www2.physik.uni-kiel.de/STEREO/data/sept/level2/SEPT_L2_description.pdf>`_) [1]_
+
+.. [1] STEREO IMPACT/SEPT Level 2 data is directly obtained through ASCII files from the `server of the instrument team <http://www2.physik.uni-kiel.de/STEREO/data/sept/level2/>`_, not via SunPy/CDAWeb.
 
 Disclaimer
 ----------
