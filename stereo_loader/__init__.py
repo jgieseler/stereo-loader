@@ -177,7 +177,7 @@ def stereo_sept_loader(startdate, enddate, spacecraft, species, viewing, resampl
                 ['integration_time']
 
     if not path:
-        path = os.getcwd()+os.sep+'data'
+        path = sunpy.config.get('downloads', 'download_dir') + os.sep
     # create list of files to load:
     dates = pd.date_range(start=startdate, end=enddate, freq='D')
     filelist = []
